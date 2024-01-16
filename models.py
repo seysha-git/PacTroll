@@ -41,6 +41,7 @@ class RectangelObject:
 
 class Troll(RectangelObject):
     def __init__(self, x,y,width, height, speed, color="green"):
+        #self.image = pg.image.load("./resources/apple.jpg").convert()
         super().__init__(x,y,width, height, color)
         self.vx = 0
         self.vy = 0

@@ -2,17 +2,27 @@ import pygame as pg
 import sys
 from settings import *
 from models import *
+import pandas as pd
 
 """
-
-
-
 """
 
+def store_highscore(score, top_score):
+    data_sett = [[score]]
+    data_sett = pd.DataFrame(data = data_sett, columns = ["Topscores"])
+    data_sett.to_csv("highscore", sep="\t", index=False)
+def get_highscore():
+    df = pd.read_csv("highscore", sep="\t")
+    highscore = df.iloc[0,0]
+    return highscore
+
+def create_objects(food_bites:list, hinderances:list):
+    ...
 
 def main(win):
-    speed = 3
+    speed = 5
     points = 0
+    top_score = get_highscore()
     game_finished = False
     print(speed)
     start_time = pg.time.get_ticks()
@@ -21,34 +31,24 @@ def main(win):
     hinderances = []
     run = True
     while run:
-        while len(food_bites) < 3:
-            x,y = rd.randint(0, WIN_WIDTH-MAIN_SHIP_WIDTH), rd.randint(0, WIN_HEIGHT-MAIN_SHIP_HEIGHT)
-            for bite in food_bites:
-                for hinderance in hinderances:
-                    if bite.collided_with(hinderance):
-                        x,y = rd.randint(0, WIN_WIDTH-MAIN_SHIP_WIDTH), rd.randint(0, WIN_HEIGHT-MAIN_SHIP_HEIGHT)
-            for i in range(len(food_bites)):
-                for j in range(i, len(food_bites)):
-                    if food_bites[i].collided_with(food_bites[j]):
-                        x,y = rd.randint(0, WIN_WIDTH-MAIN_SHIP_WIDTH), rd.randint(0, WIN_HEIGHT-MAIN_SHIP_HEIGHT)
-            for i in range(len(hinderances)):
-                for j in range(i, len(hinderances)):
-                    if hinderances[i].collided_with(hinderances[j]):
-                        x,y = rd.randint(0, WIN_WIDTH-MAIN_SHIP_WIDTH), rd.randint(0, WIN_HEIGHT-MAIN_SHIP_HEIGHT)
-            
-            food_bites.append(FoodBite(x,y,FOOD_WIDTH, FOOD_HEIGHT))
-
-        
         clock.tick(FPS)
+        while len(food_bites) < 3:
+            no_collision = False
+            collision_items = food_bites + hinderances
+            count = 0
+            while not no_collision:
+                x,y = rd.randint(0, WIN_WIDTH-MAIN_SHIP_WIDTH), rd.randint(0, WIN_HEIGHT-MAIN_SHIP_HEIGHT)
+                no_collision = True
+                new_food = FoodBite(x,y,FOOD_WIDTH, FOOD_HEIGHT)
+                for i in range(len(collision_items)):
+                    if new_food.collided_with(collision_items[i]):
+                        no_collision = False
+            food_bites.append(new_food)
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 run = False
-            #if event.type == HIDERANCE_CREATE:
-            
-        
         win.fill("black")
         points_label = POINTS_FONT.render(f"Points: {points}", 1, "white")
-
         win.blit(points_label, (30, 100))
         if main_troll.within_screen():
             main_troll.draw()
@@ -63,9 +63,7 @@ def main(win):
                 points += 1
                 food_bites.remove(bite)
                 speed += 0.3
-                print(bite.x, bite.y)
                 hinderances.append(Hinderance(bite.x, bite.y, FOOD_WIDTH, FOOD_HEIGHT))
-                print("appendedd")
         for hinderance in hinderances:
                 hinderance.draw()
                 hinderance.cooldown_time()
@@ -73,11 +71,12 @@ def main(win):
                     game_finished = True
                     sys.exit()
         pg.display.update()
+        if points > top_score:
+            store_highscore(points, top_score)
 
 
 if __name__ == "__main__":
     main(WIN)
-
 
 
 
