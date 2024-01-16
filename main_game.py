@@ -16,8 +16,7 @@ def get_highscore():
     highscore = df.iloc[0,0]
     return highscore
 
-def create_objects(food_bites:list, hinderances:list):
-    ...
+
 
 def main(win):
     speed = 5
@@ -48,7 +47,7 @@ def main(win):
             if event.type == pg.QUIT:
                 run = False
         win.fill("black")
-        points_label = POINTS_FONT.render(f"Points: {points}", 1, "white")
+        points_label = POINTS_FONT.render(f"FoodPoints: {points}", 1, "white")
         win.blit(points_label, (30, 100))
         if main_troll.within_screen():
             main_troll.draw()
