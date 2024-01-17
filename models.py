@@ -11,7 +11,6 @@ class RectangelObject:
         self.y = y
         self.width = width
         self.height = height 
-
         self.collided_rect = pg.Rect(self.x, self.y, self.width, self.height)
         self.color = color
     def draw(self):
@@ -83,7 +82,7 @@ class FoodBite(RectangelObject):
 
 
 class Hinderance(FoodBite):
-    COOLDOWN_TIME = 5
+    COOLDOWN_TIME = 3
     def __init__(self, x,y,width,height, color="grey"):
         self.time = 0
         self.ready = False

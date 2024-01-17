@@ -16,6 +16,17 @@ def get_highscore():
     highscore = df.iloc[0,0]
     return highscore
 
+def create_objects(food_bites, *argv):
+    no_collision = False
+    count = 0
+    while not no_collision:
+        x,y = rd.randint(0, WIN_WIDTH-MAIN_SHIP_WIDTH), rd.randint(0, WIN_HEIGHT-MAIN_SHIP_HEIGHT)
+        no_collision = True
+        new_food = FoodBite(x,y,FOOD_WIDTH, FOOD_HEIGHT)
+        for arg in argv:
+            if new_food.collided_with(arg):
+                no_collision = False 
+    food_bites.append(new_food)
 
 
 def main(win):
@@ -32,17 +43,8 @@ def main(win):
     while run:
         clock.tick(FPS)
         while len(food_bites) < 3:
-            no_collision = False
-            collision_items = food_bites + hinderances
-            count = 0
-            while not no_collision:
-                x,y = rd.randint(0, WIN_WIDTH-MAIN_SHIP_WIDTH), rd.randint(0, WIN_HEIGHT-MAIN_SHIP_HEIGHT)
-                no_collision = True
-                new_food = FoodBite(x,y,FOOD_WIDTH, FOOD_HEIGHT)
-                for i in range(len(collision_items)):
-                    if new_food.collided_with(collision_items[i]):
-                        no_collision = False
-            food_bites.append(new_food)
+            combined = food_bites+hinderances
+            create_objects(food_bites, *combined)
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 run = False
