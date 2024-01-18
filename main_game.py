@@ -9,7 +9,7 @@ from utils import *
 """
 
 
-
+print("newest version")
 
 def main(win):
     speed = 5
